@@ -1,0 +1,17 @@
+cookiecutter-data-science
+beautifulsoup4
+pySmartDL
+psycopg2
+pandas
+
+
+black
+flake8
+isort
+loguru
+mkdocs
+pip
+python-dotenv
+tqdm
+typer
+-e .
