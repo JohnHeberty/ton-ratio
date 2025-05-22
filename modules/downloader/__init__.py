@@ -1,3 +1,5 @@
+# pylint: disable=C0114
+
 from pySmartDL import SmartDL
 
 class FileDownloader:

@@ -1,3 +1,5 @@
+# pylint: disable=C0114
+
 from bs4 import BeautifulSoup
 import os
 

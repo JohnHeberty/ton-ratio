@@ -1,3 +1,5 @@
+# pylint: disable=C0114
+
 from typing import Any, List, Tuple, Optional  # pylint: disable=C0411
 from .idatabase_connection import IDatabaseConnection
 from .postgres_connection import PostgresConnection
@@ -36,6 +38,17 @@ class DatabaseManager:
             self.connection.rollback()
             raise e
 
+    def create_batch(self, query: str, params: List[Tuple[Any, ...]]) -> None:  # pylint: disable=C0116
+        try:
+            if isinstance(params, list):
+                self.connection.executemany(query, params)
+                self.connection.commit()
+            else:
+                raise ValueError("params should be a list of tuples")
+        except Exception as e:
+            self.connection.rollback()
+            raise e
+        
     def read(self, query: str, params: Optional[Tuple[Any, ...]] = None) -> List[Tuple[Any, ...]]:  # pylint: disable=C0116
         self.connection.execute(query, params)
         return self.connection.fetchall()

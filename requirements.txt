@@ -1,9 +1,10 @@
 cookiecutter-data-science
+python-dotenv
 beautifulsoup4
 pySmartDL
 psycopg2
 pandas
-
+Jinja2
 
 black
 flake8

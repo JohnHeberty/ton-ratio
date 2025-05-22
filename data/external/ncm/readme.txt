@@ -1,1 +1,0 @@
-Arquivos CSV com separador ponto e vírgula (;) detalhado por ano, mês, código NCM, código da unidade estatística, código de país de destino/origem do produto, código da UF de origem/destino do produto, código da via de transporte, código da URF de embarque/desembarque, quantidade estatística, quilograma líquido, valor dólar FOB (US$).

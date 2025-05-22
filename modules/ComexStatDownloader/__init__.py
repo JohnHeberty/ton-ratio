@@ -1,4 +1,4 @@
-from .file_downloader import FileDownloader
+from ..downloader import FileDownloader
 from .link_extractor import LinkExtractor
 from .page_fetcher import PageFetcher
 import os
@@ -67,7 +67,7 @@ class ComexStatDownloader:
         """
         return os.path.join(self.base_path, "external", base, direction, f"{year}.csv")
 
-    def download_files(self, limit_bases=2):
+    def download_files(self, years: list, limit_bases=2):
         """
         Downloads data files from remote links for a limited number of database bases.
 
@@ -85,13 +85,14 @@ class ComexStatDownloader:
         for base in list(dbs.keys())[:limit_bases]:
             for direction in dbs[base]:
                 for year, link in dbs[base][direction].items():
-                    path_file = self.get_file_path(base, direction, year)
-                    if not os.path.exists(path_file):
-                        os.makedirs(os.path.dirname(path_file), exist_ok=True)
-                        self.file_downloader.download(link, path_file)
-                        print(f"Downloaded: {path_file}")
-                    else:
-                        print(f"Already exists: {path_file}")
+                    if year in years:
+                        path_file = self.get_file_path(base, direction, year)
+                        if not os.path.exists(path_file):
+                            os.makedirs(os.path.dirname(path_file), exist_ok=True)
+                            self.file_downloader.download(link, path_file)
+                            print(f"Downloaded: {path_file}")
+                        else:
+                            print(f"Already exists: {path_file}")
 
 # if __name__ == "__main__":
 #     downloader = ComexStatDownloader()

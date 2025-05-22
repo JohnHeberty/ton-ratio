@@ -37,6 +37,10 @@ class IDatabaseConnection:
         raise NotImplementedError
 
     @abstractmethod
+    def executemany(self):  # pylint: disable=C0116
+        raise NotImplementedError
+
+    @abstractmethod
     def fetchone(self) -> Optional[Tuple[Any, ...]]:  # pylint: disable=C0116
         raise NotImplementedError
 

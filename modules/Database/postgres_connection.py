@@ -1,6 +1,7 @@
+# pylint: disable=C0114
+
 from .idatabase_connection import IDatabaseConnection
 from typing import Any, List, Tuple, Optional  # pylint: disable=C0411
-from psycopg2 import sql
 import psycopg2
 
 class PostgresConnection(IDatabaseConnection):
@@ -65,6 +66,11 @@ class PostgresConnection(IDatabaseConnection):
             raise RuntimeError("Database connection is not established.")
         self.cur.execute(query, params)
 
+    def executemany(self, query: str, params: List[Tuple[Any, ...]]) -> None:  # pylint: disable=C0116
+        if not self.cur:
+            raise RuntimeError("Database connection is not established.")
+        self.cur.executemany(query, params)
+        
     def fetchone(self) -> Optional[Tuple[Any, ...]]:  # pylint: disable=C0116
         return self.cur.fetchone() if self.cur else None
 

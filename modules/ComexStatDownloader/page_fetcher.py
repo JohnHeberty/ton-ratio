@@ -1,3 +1,5 @@
+# pylint: disable=C0114
+
 from typing import Optional
 import requests
 
