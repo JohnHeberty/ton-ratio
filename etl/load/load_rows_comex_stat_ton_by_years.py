@@ -8,7 +8,7 @@ from modules.database.database_manager import DatabaseManager   # pylint: disabl
 from jinja2 import Template # pylint: disable=C0411, C0413, E0401
 import pandas as pd # pylint: disable=C0411, E0411, E0401, C0413
 
-def get_db(config):
+def get_db(config: dict):
     """
     Establishes a connection to the PostgreSQL 'comexstat' database and returns a 
     DatabaseManager instance.
@@ -33,25 +33,22 @@ def get_db(config):
     db_manager = DatabaseManager(conn)
     return db_manager
 
-def run(config, batch_size: int, years: list):
+def run(config: dict, batch_size: int, years: list):
     """
-    Loads CSV data files from specified directories, filters them by year, and inserts 
-    their contents into a database in batches.
-    The function performs the following steps:
-    1. Connects to the database using `get_db()`.
-    2. Iterates over predefined base paths and subdirectories to locate CSV files.
-    3. Filters files by year, processing only those whose year is in the `years` list.
-    4. Reads each CSV file into a pandas DataFrame.
-    5. Constructs an SQL INSERT statement dynamically based on the DataFrame columns and 
-    target table.
-    6. Inserts the data into the database in batches of a specified size.
-    Notes:
-        - Only files with a `.csv` extension are processed.
-        - The target table name is constructed from the base path and subdirectory names.
-        - Data is inserted in batches to improve performance.
-    Raises:
-        Any exceptions raised by file I/O, pandas, or database operations will propagate.
+    Loads and inserts CSV data into a database in batches, filtered by specified years.
+    This function scans predefined directories for CSV files, reads their contents,
+    and inserts the data into corresponding database tables in batches of a given size.
+    Only files whose names contain a year present in the `years` list are processed.
+    Args:
+        config (dict): Configuration dictionary for database connection.
+        batch_size (int): Number of rows to insert per batch.
+        years (list): List of years (as strings) to filter which files to process.
+    Side Effects:
+        - Connects to the database using the provided configuration.
+        - Commits all inserted data and closes the database connection.
+        - Prints progress messages to the console.
     """
+
     # Conecta ao banco de dados
     db_manager = get_db(config)
 
@@ -99,3 +96,6 @@ def run(config, batch_size: int, years: list):
                         params      = [tuple([str(item) for item in row]) for row in batch]
                         db_manager.create_batch(query_header, params)
                         print(f"Lote de linhas {i} a {i+len(batch)-1} inserido com sucesso.")
+
+    db_manager.connection.commit()
+    db_manager.connection.close()

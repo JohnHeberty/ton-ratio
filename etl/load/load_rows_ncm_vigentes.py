@@ -11,7 +11,7 @@ from datetime import datetime # pylint: disable=C0411, C0413
 import pandas as pd # pylint: disable=C0411, E0411, E0401, C0413
 import json  # pylint: disable=C0411, C0413
 
-def get_db(config):
+def get_db(config: dict):
     """
     Establishes a connection to the PostgreSQL 'comexstat' database and returns a DatabaseManager instance.
     Returns:
@@ -34,30 +34,32 @@ def get_db(config):
     db_manager = DatabaseManager(conn)
     return db_manager
 
-def run(config):
+def run(config: dict, batch_size: int):
     """
-    Loads CSV data files from specified directories, filters them by year, and inserts 
-    their contents into a database in batches.
-    The function performs the following steps:
-    1. Connects to the database using `get_db()`.
-    2. Iterates over predefined base paths and subdirectories to locate CSV files.
-    3. Filters files by year, processing only those whose year is in the `years` list.
-    4. Reads each CSV file into a pandas DataFrame.
-    5. Constructs an SQL INSERT statement dynamically based on the DataFrame columns and 
-    target table.
-    6. Inserts the data into the database in batches of a specified size.
-    Notes:
-        - Only files with a `.csv` extension are processed.
-        - The target table name is constructed from the base path and subdirectory names.
-        - Data is inserted in batches to improve performance.
+    Loads NCM (Nomenclatura Comum do Mercosul) data from a JSON file and inserts it into the 
+    'ncm_vigentes' table in the database in batches.
+    Args:
+        config (dict): Configuration dictionary containing database connection parameters.
+        batch_size (int): Number of rows to insert per batch.
+    Workflow:
+        1. Connects to the database using the provided configuration.
+        2. Reads the NCM data from a JSON file located at 
+        'data/external/ncm_vigentes/Tabela_NCM_Vigente_20250515.json'.
+        3. Converts the 'Nomenclaturas' section of the JSON into a pandas DataFrame.
+        4. Prepares an SQL INSERT statement dynamically based on the DataFrame columns.
+        5. Identifies columns containing date information and formats them to 'YYYY-MM-DD'.
+        6. Inserts the data into the database in batches of the specified size.
+        7. Commits the transaction and closes the database connection.
     Raises:
-        Any exceptions raised by file I/O, pandas, or database operations will propagate.
+        FileNotFoundError: If the JSON file does not exist.
+        KeyError: If the expected 'Nomenclaturas' key is missing in the JSON.
+        Exception: For any database or data processing errors.
     """
+
     # Conecta ao banco de dados
     db_manager = get_db(config)
 
     # Insere os dados no banco de dados
-    batch_size = 30000
     file_path   = os.path.join("data","external","ncm_vigentes","Tabela_NCM_Vigente_20250515.json")
 
     with open (file_path, "r", encoding="latin1") as file:
@@ -98,4 +100,6 @@ def run(config):
             params      = [tuple([str(item) for item in row]) for row in batch]
             db_manager.create_batch(query_header, params)
             print(f"Lote de linhas {i} a {i+len(batch)-1} inserido com sucesso.")
-    
+
+    db_manager.connection.commit()
+    db_manager.connection.close()

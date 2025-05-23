@@ -14,8 +14,11 @@ config = {
         "password":     os.getenv("DB_PASSWORD",    "postgres"),
         "database":     os.getenv("DB_NAME",        "comexstat")
     },
+    "bath_size":        os.getenv("BATCH_SIZE",        "1000")
 }
 
 years = {
     "years":           eval(os.getenv("YEARS", "[]") ) # pylint: disable=W0123
 }
+
+

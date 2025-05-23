@@ -12,13 +12,13 @@ from etl.load.load_create_tables_comex_stat import run as run_create_comex_stat_
 from etl.load.load_rows_comex_stat_ton_by_years import run as run_load_rows_comex_stat_ton_by_years
 from etl.load.load_rows_ncm_vigentes import run as run_load_rows_ncm_vigentes
 
+# TRANSFORM
+from etl.transform.transform_date import run as run_transform_date
+
 # CONFIGURAÇÕES
 from modules.Config import config, years
 
 if __name__ == "__main__":
-
-    # NUMERO DE LINHAS POR LOTE DE INSERÇÃO
-    BATCH_SIZE = 30000
 
     # Run the extraction process - Comex Stat Ton by Years
     run_comex_stat_ton_ncm(years["years"])
@@ -30,7 +30,10 @@ if __name__ == "__main__":
     run_create_comex_stat_ton_ncm(config)
 
     # Run the loading process - Load Rows - Comex Stat Ton by Years
-    run_load_rows_comex_stat_ton_by_years(config, BATCH_SIZE, years["years"])
+    run_load_rows_comex_stat_ton_by_years(config, config["bath_size"], years["years"])
 
     # Run the loading process - Load Rows - NCM Vigentes
-    run_load_rows_ncm_vigentes(config)
+    run_load_rows_ncm_vigentes(config, config["bath_size"])
+
+    # Run the transformation process - Transform Date, 01/01/2023 to 2023-01-01
+    run_transform_date(config)
