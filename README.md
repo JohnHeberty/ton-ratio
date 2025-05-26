@@ -26,11 +26,12 @@ O foco do projeto é a familiarização, auditoria e processamento de dados de t
 ## Como Executar
 
 1. **Configuração**
-   - Edite o arquivo `.env` com as configurações do banco e parâmetros desejados.
+    - Edite o arquivo `.env.sample` com as configurações do banco e parâmetros desejados.
+    - Renomeie o arquivo `.env.sample` para `.env`, pois é o nome padrão de leitura.
 
 2. **Suba a infraestrutura com Docker Compose**
    ```sh
-   docker compose up --build
+    docker compose up --build
    ```
 
 3. **O pipeline ETL será executado automaticamente ao iniciar o container `server`.**
