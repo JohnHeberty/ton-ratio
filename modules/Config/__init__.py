@@ -7,18 +7,17 @@ import os # pylint: disable=C0411
 load_dotenv()
 
 config = {
-    "db": {
-        "host":         os.getenv("DB_HOST",        "localhost"),
-        "port":         int(os.getenv("DB_PORT",    "5432")),
-        "user":         os.getenv("DB_USER",        "postgres"),
-        "password":     os.getenv("DB_PASSWORD",    "postgres"),
-        "database":     os.getenv("DB_NAME",        "comexstat")
-    },
-    "bath_size":        os.getenv("BATCH_SIZE",        "1000")
+    "DB_HOST":          os.getenv("DB_HOST",        "localhost"),
+    "DB_PORT":          int(os.getenv("DB_PORT",    "5432")),
+    "DB_USER":          os.getenv("DB_USER",        "postgres"),
+    "DB_PASSWORD":      os.getenv("DB_PASSWORD",    "postgres"),
+    "DB_NAME":          os.getenv("DB_NAME",        "comexstat"),
+    "BATH_SIZE":        int(os.getenv("BATCH_SIZE",     "1000"))
 }
 
 years = {
-    "years":           eval(os.getenv("YEARS", "[]") ) # pylint: disable=W0123
+    "years": [
+        row.strip()
+        for row in      os.getenv("YEARS",          "2023").split(",")
+    ]
 }
-
-

@@ -53,7 +53,7 @@ def run(config: dict, batch_size: int, years: list):
     db_manager = get_db(config)
 
     # Insere os dados no banco de dados
-    base_paths = ["data\\external\\ncm", "data\\external\\mun"]
+    base_paths = [os.path.join("data","external","ncm"), os.path.join("data","external","mun")]
 
     for base_path in base_paths:
         for paths in os.listdir(base_path):

@@ -1,8 +1,5 @@
 # pylint: disable=C0114
 
-import os
-# os.chdir("../")
-
 from modules.ComexStatDownloader import ComexStatDownloader
 
 def run(years: list):
@@ -12,5 +9,5 @@ def run(years: list):
     """
 
     # Create an instance of ComexStatDownloader and call the download_files method
-    CSD = ComexStatDownloader()
-    CSD.download_files(years)
+    csd = ComexStatDownloader()
+    csd.download_files(years)

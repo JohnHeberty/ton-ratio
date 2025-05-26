@@ -13,5 +13,5 @@ def run():
         None
     """
 
-    NVD = NcmVigenteDownloader()
-    NVD.download_file()
+    nvd = NcmVigenteDownloader()
+    nvd.download_file()

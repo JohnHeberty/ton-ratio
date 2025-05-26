@@ -10,6 +10,7 @@ from jinja2 import Template # pylint: disable=C0411, C0413, E0401
 from datetime import datetime # pylint: disable=C0411, C0413
 import pandas as pd # pylint: disable=C0411, E0411, E0401, C0413
 import json  # pylint: disable=C0411, C0413
+from glob import glob # pylint: disable=C0411, C0413
 
 def get_db(config: dict):
     """
@@ -60,9 +61,17 @@ def run(config: dict, batch_size: int):
     db_manager = get_db(config)
 
     # Insere os dados no banco de dados
-    file_path   = os.path.join("data","external","ncm_vigentes","Tabela_NCM_Vigente_20250515.json")
+    folder_path   = os.path.join("data","external","ncm_vigentes")
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Verifica se o arquivo JSON existe na pasta
+    if os.listdir(folder_path) == 0:
+        raise FileNotFoundError(f"Arquivo JSON de NCM Vigentes não encontrado na pasta {folder_path}") # pylint: disable=C0301
+    file_path   = glob(os.path.join(folder_path, "*.json"))[0]
 
     with open (file_path, "r", encoding="latin1") as file:
+
+        # Lê o arquivo JSON
         json_data = json.load(file)
         nomenclaturas = json_data["Nomenclaturas"]
         df = pd.DataFrame(nomenclaturas)

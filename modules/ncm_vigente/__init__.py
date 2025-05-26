@@ -1,6 +1,7 @@
 # pylint: disable=C0114
 
 from ..downloader import FileDownloader
+from datetime import datetime
 import os
 
 class NcmVigenteDownloader:
@@ -38,14 +39,18 @@ class NcmVigenteDownloader:
             OSError: For other issues encountered during file operations.
         """
         path_file   = os.path.join(self.base_path, "external", "ncm_vigentes")
-        file_choice = max(
-            os.listdir(path_file),
-            key=lambda x: "".join([row for row in x if row.isdigit()])
-        )
-        for file_now in os.listdir(path_file):
-            if os.path.basename(file_choice) != file_now:
-                os.remove(os.path.join(path_file, file_now))
-        return file_choice if file_choice != "" else path_file
+        os.makedirs(path_file, exist_ok=True)
+        file_choice = ""
+        if len(os.listdir(path_file)) > 0:
+            file_choice = max(
+                os.listdir(path_file),
+                key=lambda x: "".join([row for row in x if row.isdigit()])
+            )
+            for file_now in os.listdir(path_file):
+                if os.path.basename(file_choice) != file_now:
+                    os.remove(os.path.join(path_file, file_now))
+            return True, file_choice if file_choice != "" else path_file
+        return False, file_choice if file_choice != "" else path_file
 
     def download_file(self):
         """
@@ -60,10 +65,14 @@ class NcmVigenteDownloader:
         Returns:
             None
         """
-        path_file = self.get_file_path()
-        if not os.path.exists(path_file):
+        status, path_file = self.get_file_path()
+        if not status:
             os.makedirs(os.path.dirname(path_file), exist_ok=True)
-            self.file_downloader.download(self.base_url, path_file)
+            download_path = os.path.join(
+                path_file,
+                f"ncm_vigentes_{datetime.now().strftime('%Y%m%d')}.json"
+            )
+            self.file_downloader.download(self.base_url, download_path)
             print(f"Downloaded: {path_file}")
         else:
             print(f"Already exists: {path_file}")
