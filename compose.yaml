@@ -13,14 +13,13 @@ services:
     build:
       context: .
     depends_on:
-      - db2
+      - db
     volumes:
       - ./data:/app/data
     networks:
       - app-network
 
-  # db:
-  db2:
+  db:
     image: postgres:latest
     restart: unless-stopped
     user: postgres
@@ -33,8 +32,7 @@ services:
     expose:
       - 5432
     volumes:
-      # - db-data:/var/lib/postgresql/data
-      - db-data2:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     networks:
       - app-network
     healthcheck:
@@ -47,8 +45,7 @@ networks:
   app-network:
 
 volumes:
-  # db-data:
-  db-data2:
+  db-data:
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
